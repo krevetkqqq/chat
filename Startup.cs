@@ -1,7 +1,5 @@
-﻿using Microservices;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
-using System.IO;
+﻿using DbsClasses;
+using Microservices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +19,9 @@ builder.Services.AddSingleton<MicroserviceHost>();
 
 builder.Logging.ClearProviders(); 
 builder.Logging.SetMinimumLevel(LogLevel.None);
+
+new RSAClass();
+new AESClass();
 #endregion
 
 var app = builder.Build();

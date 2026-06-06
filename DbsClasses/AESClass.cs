@@ -6,6 +6,13 @@ namespace DbsClasses;
 
 public sealed class AESClass
 {
+    public AESClass()
+    {
+        if (File.Exists("aes.env")) return;
+        _aesKey = new byte[32];
+        RandomNumberGenerator.Create().GetBytes(_aesKey);
+        File.WriteAllBytes("aes.env", _aesKey);
+    }
     private byte[]? _aesKey;
     public byte[] AESKey
     {
@@ -13,16 +20,15 @@ public sealed class AESClass
         {
             if (_aesKey == null)
             {
-                var filePath = ".env";
-                if (File.Exists(filePath))
+                if (File.Exists("aes.env"))
                 {
-                    _aesKey = File.ReadAllBytes(filePath);
+                    _aesKey = File.ReadAllBytes("aes.env");
                 }
                 else
                 {
                     _aesKey = new byte[32];
                     RandomNumberGenerator.Create().GetBytes(_aesKey);
-                    File.WriteAllBytes(filePath, _aesKey);
+                    File.WriteAllBytes("aes.env", _aesKey);
                 }
             }
             return _aesKey;

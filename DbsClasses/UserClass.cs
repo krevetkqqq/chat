@@ -17,5 +17,8 @@ public class User
     public string Name { get; set; }
     [JsonPropertyName("password")]
     public string Password { get; set; }
+    [JsonPropertyName("admin")]
     public string AdminStatus = "None";
+    [JsonPropertyName("utcplus")]
+    public int HoursAdd = 0;
 }

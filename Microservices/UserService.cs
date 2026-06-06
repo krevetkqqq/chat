@@ -16,7 +16,7 @@ public sealed class UserService : IWebMicroservice
         var body = await reader.ReadToEndAsync();
         return body;
     }
-    private readonly ApplicationContext _applicationContext = new();
+    private readonly UserDb _applicationContext = new();
     public string Name => "UserService";
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -43,13 +43,11 @@ public sealed class UserService : IWebMicroservice
             await LoggingService.LogAsync("[UserService] POST /register вызван");
 
             var body = await ReadBody(context);
-            User user;
+            User user = new();
             try
             {
-                var nullableUser = JsonSerializer.Deserialize<User>(body);
-                if (nullableUser == null)
-                    return Results.BadRequest(new { message = "User registration failed"});
-                user = nullableUser;
+                user.Name = JsonNode.Parse(body)["user"]!.GetValue<string>();
+                user.Password = JsonNode.Parse(body)["password"]!.GetValue<string>();
                 await LoggingService.LogAsync($"[UserService] Десериализован пользователь: {user.Name}");
             }
             catch (Exception ex)
@@ -95,6 +93,8 @@ public sealed class UserService : IWebMicroservice
             await LoggingService.LogAsync("[UserService] POST /token вызван");
 
             var body = await ReadBody(context);
+            if (body.Length == 0)
+                return Results.BadRequest(new { message = "Token is empty"});
             try
             {
                 var token = JsonNode.Parse(body)["token"]!.GetValue<string>();
@@ -111,6 +111,23 @@ public sealed class UserService : IWebMicroservice
             await LoggingService.LogAsync("[UserService] GET /users вызван");
 
             return Results.Ok(new { message = _applicationContext.GetUsers()});
+        });
+        app.MapPost("/info", async (HttpContext context) =>
+        {
+            await LoggingService.LogAsync("[UserService] GET /info вызван");
+            var body = await ReadBody(context);
+            if (body.Length == 0)
+                return Results.BadRequest(new { message = "Token is empty"});
+            try
+            {
+                var token = JsonNode.Parse(body)["token"]!.GetValue<string>();
+                return Results.Ok(new { message = _applicationContext.GetUser(_aes.Decrypt(token))});
+            }
+            catch (Exception ex)
+            {
+                await LoggingService.ErrorAsync(ex.Message);
+                return Results.BadRequest(new { message = ex.Message});
+            }    
         });
     }
 }

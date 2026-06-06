@@ -3,15 +3,15 @@ using DbsClasses;
 using Microservices;
 using System.Text.RegularExpressions;
 
-public class ApplicationContext : DbContext
+public class UserDb : DbContext
 {
     private DbSet<User> Users => Set<User>();
-    public ApplicationContext() => Database.EnsureCreated();
+    public UserDb() => Database.EnsureCreated();
     private readonly AESClass _aes = new();
  
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=helloapp.db");
+        optionsBuilder.UseSqlite("Data Source=user.db");
     }
     public string AddUser(User user)
     {
@@ -74,6 +74,10 @@ public class ApplicationContext : DbContext
     }
     public List<object> GetUsers()
     {
-        return Users.Select(x => new { Id = x.Id, Name = x.Name, Admin = x.AdminStatus}).ToList<object>();
+        return Users.Select(x => new { Id = x.Id, Name = x.Name, Admin = x.AdminStatus, UtcPlus = x.HoursAdd}).ToList<object>();
+    }
+    public object? GetUser(string name)
+    {
+        return Users.Select(x => new { Id = x.Id, Name = x.Name, Admin = x.AdminStatus, UtcPlus = x.HoursAdd}).FirstOrDefault(x => x.Name == name);
     }
 }

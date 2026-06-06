@@ -315,3 +315,4 @@ error.glsl
 obj/
 bin/
 .git
+*.env
