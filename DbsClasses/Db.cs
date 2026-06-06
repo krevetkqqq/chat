@@ -17,6 +17,8 @@ public class ApplicationContext : DbContext
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(user.Name))
+                return "Name cannot be empty";
             if (Users.Any(u => u.Name == user.Name))
                 return "User with this name already exists";
             if (user.Password.Length < 6)

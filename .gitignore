@@ -311,3 +311,7 @@ Resources/MapImages
 error.glsl
 
 .env
+*.db
+obj/
+bin/
+.git
