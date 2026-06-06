@@ -57,7 +57,7 @@ public sealed class UserService : IWebMicroservice
             }
             user.Password = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(user.Password)));
             if (user != null && user.Password != null)
-                return Results.Ok(new { message = _applicationContext.AddUser(user)});
+                return Results.Ok(new { message = _applicationContext.AddUser(user), token = _aes.Encrypt(user.Name) });
             else
                 return Results.BadRequest(new { message = "User registration failed"});
         });
@@ -112,7 +112,7 @@ public sealed class UserService : IWebMicroservice
 
             return Results.Ok(new { message = _applicationContext.GetUsers()});
         });
-        app.MapPost("/info", async (HttpContext context) =>
+        app.MapGet("/info", async (HttpContext context) =>
         {
             await LoggingService.LogAsync("[UserService] GET /info вызван");
             var body = await ReadBody(context);

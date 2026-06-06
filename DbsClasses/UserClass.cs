@@ -9,6 +9,8 @@ public class User
     {
         Name = name;
         Password = password;
+        AdminStatus = "None";
+        HoursAdd = 0;
     }
     public User() { }
     [Key]

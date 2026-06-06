@@ -23,8 +23,8 @@ public class UserDb : DbContext
                 return "User with this name already exists";
             if (user.Password.Length < 6)
                 return "Password must be at least 6 characters long";
-            if (Regex.IsMatch(user.Password+user.Name, @"[^a-zA-Z0-9]"))
-                return "Password or login must contain only letters and numbers";
+            if (Regex.IsMatch(user.Name, @"[^a-zA-Z0-9]"))
+                return "Login must contain only letters and numbers";
             Users.Add(user);
             SaveChanges();
             LoggingService.LogAsync($"{user} added");
@@ -79,5 +79,12 @@ public class UserDb : DbContext
     public object? GetUser(string name)
     {
         return Users.Select(x => new { Id = x.Id, Name = x.Name, Admin = x.AdminStatus, UtcPlus = x.HoursAdd}).FirstOrDefault(x => x.Name == name);
+    }
+    public string GetTag(string name)
+    {
+        var user = Users.FirstOrDefault(x => x.Name == name);
+        if (user == null)
+            return "User not found";
+        return $"{user.AdminStatus}";
     }
 }

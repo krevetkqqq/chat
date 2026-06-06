@@ -316,3 +316,5 @@ obj/
 bin/
 .git
 *.env
+*.db-shm
+*.db-wal

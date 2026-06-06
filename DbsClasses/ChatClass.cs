@@ -5,18 +5,19 @@ namespace DbsClasses;
 
 public class Chat
 {
-    public Chat(User owner)
+    public Chat(string owner, string name)
     {
         Owner = owner;
-        Members = new User[0];
+        Members = new string[0];
+        Name = name;
     }
     public Chat() { }
     [Key]
     public int Id { get; set; }
-    [JsonPropertyName("user")]
-    public User Owner { get; set; }
+    [JsonPropertyName("owner")]
+    public string Owner { get; set; }
     [JsonPropertyName("name")]
     public string Name { get; set; }
-    public User[] Members { get; set; } = [];
+    public string[] Members { get; set; } = [];
     public string[] Messages { get; set; } = [];
 }

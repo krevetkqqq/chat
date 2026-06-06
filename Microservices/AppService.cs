@@ -27,11 +27,6 @@ public sealed class AppService : IWebMicroservice
 
     public void MapEndpoints(WebApplication app)
     {
-        app.MapGet("/info", (MicroserviceHost host) =>
-            new
-            {
-                Status = "running",
-                Services = host.Services.Select(s => s.Name)
-            });
+
     }
 }
