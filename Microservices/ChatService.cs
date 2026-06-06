@@ -52,6 +52,8 @@ public sealed class ChatService : IWebMicroservice
             try
             {
                 var chatname = JsonNode.Parse(body)["chat"]!.GetValue<string>();
+                if (int.TryParse(chatname, out _))
+                    return Results.Ok(new { message = _applicationContext.GetChat(int.Parse(chatname))});
                 return Results.Ok(new { message = _applicationContext.GetChat(chatname)});
             }
             catch (Exception ex)
@@ -94,7 +96,7 @@ public sealed class ChatService : IWebMicroservice
                 var token = JsonNode.Parse(body)["token"]!.GetValue<string>();
                 await LoggingService.LogAsync($"[ChatService] Десериализован чат: {chatname}, токен: {_aes.Decrypt(token)}");
                 Chat chat = new(_aes.Decrypt(token), chatname);
-                
+
                 return Results.Ok(new { message = _applicationContext.AddChat(chat)});
             }
             catch (Exception ex)

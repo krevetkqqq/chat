@@ -91,10 +91,10 @@ public class ChatDb : DbContext
                 return "User not in chat";
             if (chat.Owner == user)
                 return "Chat owner cannot leave the chat";
+            SendMessage(chat, user, "User left chat");
             chat.Members = chat.Members.Where(u => u != user).ToArray();
             SaveChanges();
             LoggingService.LogAsync($"{user} left {chat}");
-            SendMessage(chat, user, "User left chat");
             return "User left chat";
         }
         catch (Exception ex)
